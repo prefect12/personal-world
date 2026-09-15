@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three.module.js';
 import {destinations,pages} from './content.js';
 const $=s=>document.querySelector(s);
-export function createGame({theme,onVisit,visited}){
+export function createGame({theme,onVisit,onDiscover,visited}){
  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;$('#world').append(renderer.domElement);
  const scene=new THREE.Scene(), camera=new THREE.OrthographicCamera(-20,20,15,-15,.1,160);
@@ -95,7 +95,7 @@ export function createGame({theme,onVisit,visited}){
  const state={x:0,z:10,angle:Math.PI,zoom:1},cameraTarget=new THREE.Vector3(0,0,7);
  const pressed=k=>keys.has(k)||(pulses.get(k)||0)>performance.now();
  const listen=(target,event,fn,options)=>{target.addEventListener(event,fn,options);listeners.push(()=>target.removeEventListener(event,fn,options));};
- let mobile=innerWidth<=700,near=null,last=performance.now(),elapsed=0,wakeTimer=0,wakeIndex=0,found=0,stopped=false,uiTimer=0;
+ let mobile=innerWidth<=700,near=null,shownId=null,dismissedId=null,last=performance.now(),elapsed=0,wakeTimer=0,wakeIndex=0,found=0,stopped=false,uiTimer=0;
  $('#world-name').textContent=theme==='ocean'?'Ocean / 群岛漫游':'Orbit / 星际航行';
  const markers=islands.map((d,i)=>{const b=document.createElement('button');b.className='marker';b.textContent=pages[d.id].label;b.setAttribute('aria-label','阅读 '+pages[d.id].label);b.onclick=()=>visit(d.id);$('#markers').append(b);return b;});
  function visit(id){keys.clear();pulses.clear();onVisit(id);refreshVisited();}
@@ -108,7 +108,18 @@ export function createGame({theme,onVisit,visited}){
  $('#zoom-out').onclick=()=>{state.zoom=THREE.MathUtils.clamp(state.zoom-.15,.6,1.45);resize();};$('#zoom-in').onclick=()=>{state.zoom=THREE.MathUtils.clamp(state.zoom+.15,.6,1.45);resize();};
  $('#reset').onclick=()=>{state.x=0;state.z=10;state.angle=Math.PI;keys.clear();pulses.clear();};
  function motionUI(){$('#motion').textContent=paused?'恢复动画':'暂停动画';$('#motion').setAttribute('aria-pressed',String(paused));}motionUI();$('#motion').onclick=()=>{paused=!paused;motionUI();};
- $('#dock').onclick=()=>{if(near)visit(near.id);};
+ // Keep proximity reading non-modal so keyboard and touch navigation stay available.
+ const panel=$('#dock-prompt');
+ function hidePanel(){if(panel.contains(document.activeElement))document.activeElement.blur();panel.hidden=true;}
+ $('#dock-close').onclick=()=>{dismissedId=near?.id;hidePanel();};
+ function updateProximity(overlay){
+  // A wider exit radius prevents flicker when sailing along the boundary.
+  if(!near||Math.hypot(state.x-near.x,state.z-near.z)>near.r+4)near=islands.find(d=>Math.hypot(state.x-d.x,state.z-d.z)<d.r+3)||null;
+  const id=near?.id||null;
+  if(id!==shownId){shownId=id;dismissedId=null;if(id){const p=pages[id];$('#dock-index').textContent=p.index;$('#dock-title').textContent=p.title;$('#dock-body').innerHTML=p.body;$('#dock-body').scrollTop=0;onDiscover(id);refreshVisited();}}
+  if(!id||overlay||dismissedId===id)hidePanel();else panel.hidden=false;
+ }
+
  const moveKeys=['w','a','s','d','arrowup','arrowleft','arrowdown','arrowright','shift'];
  listen(window,'keydown',e=>{if(document.querySelector('dialog[open]'))return;const k=e.key.toLowerCase();if(moveKeys.includes(k)){e.preventDefault();keys.add(k);pulses.set(k,performance.now()+130);}if((k==='enter'||k==='e')&&near&&e.target===document.body){e.preventDefault();visit(near.id);}});
  listen(window,'keyup',e=>keys.delete(e.key.toLowerCase()));listen(window,'blur',()=>{keys.clear();pulses.clear();});listen(document,'visibilitychange',()=>{keys.clear();pulses.clear();last=performance.now();});
@@ -132,8 +143,7 @@ export function createGame({theme,onVisit,visited}){
   dolphins.forEach((d,i)=>{const t=elapsed*.65+i*.7;d.position.set(-12+Math.sin(t*.3)*4+i,Math.max(-.7,Math.sin(t)*1.1),10+Math.cos(t*.3)*7);d.rotation.set(Math.cos(t)*.4,t*.3,0);});
   animated.forEach(a=>{if(a.kind==='windmill')a.object.rotation.z=elapsed*.5;else a.object.rotation.y=elapsed*.3;});lightBeam.rotation.y=elapsed*.4;planets.forEach((p,i)=>p.rotation.y=elapsed*(.05+i*.009));stars.rotation.y=elapsed*.002;
   beacons.forEach(b=>{if(b.taken)return;b.g.position.y=.6+Math.sin(elapsed*1.9+b.phase)*.16;b.m.rotation.y=elapsed*1.3;if(Math.hypot(state.x-b.x,state.z-b.z)<1.2){b.taken=true;b.g.visible=false;found++;}});
-  near=null;for(const item of islands)if(Math.hypot(state.x-item.x,state.z-item.z)<item.r+3){near=item;break;}
-  $('#dock-prompt').hidden=!near||overlay;if(near){$('#dock-index').textContent=pages[near.id].index;$('#dock-title').textContent=pages[near.id].label;$('#dock').firstChild.textContent=theme==='ocean'?'靠岸阅读 ':'着陆阅读 ';}
+  updateProximity(overlay);
   uiTimer+=dt;if(uiTimer>.15){uiTimer=0;$('#map-player').style.left=`${state.x+50}%`;$('#map-player').style.top=`${(state.z+46)/.94}%`;$('#map-player').setAttribute('aria-label',`当前位置 ${Math.round(state.x)}, ${Math.round(state.z)}`);$('#travel-status').textContent=mobile?`航标 ${found} / ${beacons.length}`:`WASD / 方向键 · Shift 加速 · 航标 ${found} / ${beacons.length}`;}
   scene.updateMatrixWorld();anchors[theme].forEach((g,i)=>{projected.set(0,theme==='ocean'?1.2:1,islands[i].r*.7);g.localToWorld(projected);projected.project(camera);const b=markers[i],x=(projected.x*.5+.5)*innerWidth,y=(-projected.y*.5+.5)*innerHeight;b.style.left=`${x}px`;b.style.top=`${y}px`;b.hidden=x<45||x>innerWidth-65||y<155||y>innerHeight-155||(x>innerWidth-215&&y<330&&!$('#map-shell').classList.contains('collapsed'));});
   renderer.render(scene,camera);
