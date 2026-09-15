@@ -17,8 +17,17 @@ $$('[data-select]').forEach(b=>b.onclick=()=>selectWorld(b.dataset.select));
 $$('[data-menu-world]').forEach(b=>b.onclick=()=>{menu.close();showHome(b.dataset.menuWorld);});
 $('#fallback-links').innerHTML=destinations.map(d=>`<button data-fallback="${d.id}">${pages[d.id].label}</button>`).join('');$$('[data-fallback]').forEach(b=>b.onclick=()=>openPage(b.dataset.fallback));
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+let worldLoadAttempt=0;
+async function loadWorld(){
+ // Failed module requests are cached by the browser; retry with a fresh URL.
+ for(let attempt=0;attempt<2;attempt++){
+  const retry=worldLoadAttempt++,url='./worlds.js?v=glass-1'+(retry?'&retry='+retry:'');
+  try{return await import(url);}catch(error){if(attempt===1)throw error;}
+ }
+}
+
 $('#home-enter').onclick=async()=>{if(busy)return;busy=true;$('#home-enter').disabled=true;$('#transition').classList.add('active');const target=selected;try{
- const worldModule=target==='journey'?null:await import('./worlds.js?v=glass-1');await delay(matchMedia('(prefers-reduced-motion: reduce)').matches?0:450);
+ const worldModule=target==='journey'?null:await loadWorld();await delay(matchMedia('(prefers-reduced-motion: reduce)').matches?0:450);
  $('#home').hidden=true;$('#game-fallback').hidden=true;
  if(target==='journey'){view='journey';document.body.dataset.view='journey';$('#journey').hidden=false;journey.start();}
  else{view='game';document.body.dataset.view='game';$('#game').hidden=false;try{game=worldModule.createGame({theme:target,onVisit:openPage,onDiscover:recordDiscovery,visited});}catch(e){console.error('World initialization failed',e);$('#game-fallback').hidden=false;}}
