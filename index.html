@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#9bdcdb">
+  <meta name="description" content="Kade 的可探索个人世界。驾驶小船穿过海岛，飞向星球，或走进一间雕塑展厅。">
+  <title>Kade — A little world</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23094046'/%3E%3Ctext x='16' y='46' font-family='Georgia' font-size='46' fill='%23fff4df'%3Ek%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body data-theme="ocean">
+  <a class="skip" href="#navigation">跳到个人介绍</a>
+  <div id="world" aria-label="可交互的三维个人世界"></div>
+  <header><a class="brand" href="./" aria-label="Kade 首页">kade<span>.</span></a><nav id="navigation" aria-label="个人主页"><button data-page="about">About</button><button data-page="work">Work</button><button data-page="notes">Notes</button><button data-page="contact">Contact</button></nav></header>
+  <main>
+    <section class="intro"><h1>A little world,<br>a lot of<br class="medium-break"> curiosity.</h1><p>Hi, I’m Kade. Welcome aboard.</p><button class="primary" id="start">Start exploring <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button></section>
+    <div id="markers" aria-label="探索地点"></div>
+    <button id="dock" class="dock" hidden></button>
+    <div class="explore-message" id="explore-message" hidden>驶向一座岛，或者点击它的名字。</div>
+    <div class="fallback" id="fallback" hidden>当前设备无法显示 3D 场景。你仍可通过顶部导航阅读全部内容。</div>
+  </main>
+  <footer>
+    <div class="themes" role="group" aria-label="切换世界风格"><button data-theme="ocean" aria-pressed="true">Ocean</button><button data-theme="orbit" aria-pressed="false">Orbit</button><button data-theme="studio" aria-pressed="false">Studio</button></div>
+    <div class="instructions" id="instructions"><span class="keys">W A S D</span><span>/ Arrow keys to sail</span></div>
+    <div class="utilities"><button id="motion" aria-pressed="false" title="暂停环境动画">Pause motion</button><button id="reset" title="回到起点">Reset</button></div>
+  </footer>
+  <div class="touch-controls" aria-label="移动控制"><button data-key="arrowup" aria-label="向前">↑</button><div><button data-key="arrowleft" aria-label="向左">←</button><button data-key="arrowdown" aria-label="向后">↓</button><button data-key="arrowright" aria-label="向右">→</button></div></div>
+  <dialog id="detail" aria-labelledby="detail-title"><button class="close" id="close" aria-label="关闭介绍"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></svg></button><span class="detail-index" id="detail-index"></span><h2 id="detail-title"></h2><div id="detail-body"></div><button class="return" id="return">继续探索 <span aria-hidden="true">↗</span></button></dialog>
+  <noscript><p class="fallback">请启用 JavaScript 来探索世界。Kade 的公开 GitHub：<a href="https://github.com/prefect12">prefect12</a>。</p></noscript>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
