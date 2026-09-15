@@ -1,15 +1,15 @@
 {
   "name": "kade-personal-world",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "scripts": {
     "dev": "python3 -m http.server 8937 --bind 127.0.0.1",
-    "check": "node --check main.js && node --check content.js"
+    "check": "node --check main.js && node --check content.js && node --check worlds.js && node --check journey.js"
   },
   "keywords": [],
   "author": "",
-  "description": "Three playable worlds for a personal homepage",
+  "description": "Poster entrance, explorable 3D resume worlds and a scroll-driven journey",
   "dependencies": {
-    "three": "^0.180.0"
+    "three": "0.180.0"
   },
   "private": true,
   "type": "module"

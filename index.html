@@ -1,32 +1,48 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#9bdcdb">
-  <meta name="description" content="Kade 的可探索个人世界。驾驶小船穿过海岛，飞向星球，或走进一间雕塑展厅。">
-  <title>Kade — A little world</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23094046'/%3E%3Ctext x='16' y='46' font-family='Georgia' font-size='46' fill='%23fff4df'%3Ek%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./style.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#09434b">
+<title>Kade Wu — Choose your world</title><meta name="description" content="Kade Wu 的个人世界。航行于海岛和星球之间，探索后端工程、工作经历和个人项目，或沿着 Journey 滚动阅读。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23094046'/%3E%3Ctext x='16' y='46' font-family='Georgia' font-size='46' fill='%23fff4df'%3Ek%3C/text%3E%3C/svg%3E"><link rel="preload" as="image" href="./assets/ocean.webp"><link rel="stylesheet" href="./style.css">
 </head>
-<body data-theme="ocean">
-  <a class="skip" href="#navigation">跳到个人介绍</a>
-  <div id="world" aria-label="可交互的三维个人世界"></div>
-  <header><a class="brand" href="./" aria-label="Kade 首页">kade<span>.</span></a><nav id="navigation" aria-label="个人主页"><button data-page="about">About</button><button data-page="work">Work</button><button data-page="notes">Notes</button><button data-page="contact">Contact</button></nav></header>
-  <main>
-    <section class="intro"><h1>A little world,<br>a lot of<br class="medium-break"> curiosity.</h1><p>Hi, I’m Kade. Welcome aboard.</p><button class="primary" id="start">Start exploring <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button></section>
-    <div id="markers" aria-label="探索地点"></div>
-    <button id="dock" class="dock" hidden></button>
-    <div class="explore-message" id="explore-message" hidden>驶向一座岛，或者点击它的名字。</div>
-    <div class="fallback" id="fallback" hidden>当前设备无法显示 3D 场景。你仍可通过顶部导航阅读全部内容。</div>
-  </main>
-  <footer>
-    <div class="themes" role="group" aria-label="切换世界风格"><button data-theme="ocean" aria-pressed="true">Ocean</button><button data-theme="orbit" aria-pressed="false">Orbit</button><button data-theme="studio" aria-pressed="false">Studio</button></div>
-    <div class="instructions" id="instructions"><span class="keys">W A S D</span><span>/ Arrow keys to sail</span></div>
-    <div class="utilities"><button id="motion" aria-pressed="false" title="暂停环境动画">Pause motion</button><button id="reset" title="回到起点">Reset</button></div>
-  </footer>
-  <div class="touch-controls" aria-label="移动控制"><button data-key="arrowup" aria-label="向前">↑</button><div><button data-key="arrowleft" aria-label="向左">←</button><button data-key="arrowdown" aria-label="向后">↓</button><button data-key="arrowright" aria-label="向右">→</button></div></div>
-  <dialog id="detail" aria-labelledby="detail-title"><button class="close" id="close" aria-label="关闭介绍"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></svg></button><span class="detail-index" id="detail-index"></span><h2 id="detail-title"></h2><div id="detail-body"></div><button class="return" id="return">继续探索 <span aria-hidden="true">↗</span></button></dialog>
-  <noscript><p class="fallback">请启用 JavaScript 来探索世界。Kade 的公开 GitHub：<a href="https://github.com/prefect12">prefect12</a>。</p></noscript>
-  <script type="module" src="./main.js"></script>
-</body>
-</html>
+<body data-view="home" data-theme="ocean">
+<a class="skip" href="#home-enter">跳到进入按钮</a>
+<header class="site-header"><button class="brand" id="home-button" aria-label="返回世界选择">kade<span>.</span></button><div class="header-actions"><button data-page="about" class="about-link">关于我</button><button id="menu-open" aria-haspopup="dialog">菜单 <span class="menu-lines" aria-hidden="true"></span></button></div></header>
+<main>
+<section id="home" class="home" aria-label="选择你的世界">
+ <div class="poster-stack" aria-hidden="true"><img class="poster active" data-poster="ocean" src="./assets/ocean.webp" alt=""><img class="poster" data-poster="orbit" src="./assets/orbit.webp" alt=""><img class="poster" data-poster="journey" src="./assets/journey.webp" alt=""></div>
+ <div class="home-copy"><h1 id="home-title">A little world,<br>a lot of curiosity.</h1><p id="home-description">我是 Kade。一段经历，一座岛。</p><button id="home-enter" class="primary">进入海岛 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button><p class="entry-hint" id="entry-hint">驾驶小船，探索我的经历与作品。</p></div>
+ <div class="home-bottom"><div class="world-tabs" role="group" aria-label="切换首页海报"><button data-select="ocean" aria-pressed="true"><span>01</span> Ocean</button><button data-select="orbit" aria-pressed="false"><span>02</span> Orbit</button><button data-select="journey" aria-pressed="false"><span>03</span> Journey</button></div><span class="home-note">三个世界，同一个我。</span></div>
+</section>
+<section id="game" class="game" aria-label="探索游戏" hidden>
+ <div id="world" aria-label="三维探索地图"></div><div id="markers"></div>
+ <div class="game-top"><span id="world-name">Ocean / 群岛漫游</span><span id="discovery-count">已发现 0 / 8</span></div>
+ <div class="map-shell" id="map-shell"><div class="map-caption"><span>探索地图</span><button id="map-toggle" aria-expanded="false" aria-controls="minimap">收起</button></div><div id="minimap" class="minimap"><div class="map-grid"></div><div id="map-points"></div><span id="map-player" aria-label="当前位置"></span></div><p class="map-tip">点击地点，快速前往</p></div>
+ <div class="game-bottom"><div id="travel-status" role="status">方向键 / WASD 航行 · Shift 加速</div><div class="game-tools"><button id="zoom-out" aria-label="缩小视野">−</button><button id="zoom-in" aria-label="放大视野">＋</button><button id="motion" aria-pressed="false">暂停动画</button><button id="reset">回到港口</button></div></div>
+ <div id="dock-prompt" class="dock-prompt" hidden><div><span id="dock-index"></span><strong id="dock-title"></strong></div><button id="dock">靠岸阅读 <span>↗</span></button></div>
+ <div class="touch-controls" aria-label="移动控制"><button data-key="arrowup" aria-label="向前">↑</button><div><button data-key="arrowleft" aria-label="向左">←</button><button data-key="arrowdown" aria-label="向后">↓</button><button data-key="arrowright" aria-label="向右">→</button></div></div>
+ <div id="game-fallback" hidden><h2>仍然可以探索这些故事。</h2><p>当前设备无法显示 3D，点击下方地点阅读。</p><div id="fallback-links"></div></div>
+</section>
+<article id="journey" class="journey" hidden>
+ <div class="scroll-progress" aria-hidden="true"></div>
+ <section class="journey-hero"><img src="./assets/journey.webp" alt="橙色缎带延伸成一道拱门" class="journey-art"><div class="journey-intro"><h1>从好奇心，<br>到真正运行的系统。</h1><p>Kade Wu / Backend Engineer</p></div><a class="scroll-invite" href="#career">向下滚动，认识我 <span>↓</span></a></section>
+ <section class="career-section" id="career"><div class="career-sticky"><div class="section-heading"><h2>把复杂<br class="mobile-break">留给系统。</h2><p>广告交易、达人匹配、工程自动化。<br>用代码处理真实的问题。</p></div><div class="career-line"><span></span></div><div class="career-track" id="career-track">
+ <section class="career-card"><span class="career-date">2023 起</span><h3>AhaLab</h3><p class="career-role">Backend Engineer</p><p>开发达人匹配与广告系统核心服务，使用 Golang 和 Python，让业务需求成为可运行的后端能力。</p><div class="career-tech">Golang / Python / AWS / Kafka</div><div class="career-visual network-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><svg viewBox="0 0 400 130"><path d="M20 65H95L150 20H255L310 65H385M95 65L150 110H255L310 65M150 20V110M255 20V110"/></svg></div><button data-page="ahalab">阅读这段经历 ↗</button></section>
+ <section class="career-card"><span class="career-date">2022 — 2023</span><h3>Liftoff</h3><p class="career-role">Platform Backend Engineer</p><p>开发和维护广告交易核心服务，扩展 RESTful 接口，改进指标与日志，并为合作伙伴设计测试应用后端。</p><div class="career-tech">Golang / AWS / MongoDB / Redis</div><div class="career-visual signal-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><button data-page="liftoff">阅读这段经历 ↗</button></section>
+ <section class="career-card"><span class="career-date">2020.11 — 2022.03</span><h3>DiDi</h3><p class="career-role">Developer Engineer</p><p>构建测试与 CI/CD 工具，自动汇总覆盖率，设计故障注入和日志分析工具，把质量问题更早暴露出来。</p><div class="career-tech">Golang / Shell / MySQL / CI/CD</div><div class="career-visual bars-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><button data-page="didi">阅读这段经历 ↗</button></section>
+ </div><div class="career-navigation"><span id="career-step">01 / 03</span><div><button id="career-prev" aria-label="上一段经历">←</button><button id="career-next" aria-label="下一段经历">→</button></div><span>滚动，继续前行</span></div></div></section>
+ <section class="projects-section"><div class="section-heading reveal"><h2>让代码<br class="mobile-break">真正有用。</h2><p>从工作中的系统，<br>到生活里的小工具。</p></div>
+ <button class="project-row reveal" data-page="liftoff"><span class="project-no">01</span><div><h3>广告交易服务</h3><p>核心服务、RESTful 接口与系统可观测性。</p></div><span class="project-category">PLATFORM</span><span class="project-arrow">↗</span></button>
+ <button class="project-row reveal" data-page="didi"><span class="project-no">02</span><div><h3>覆盖率统计服务</h3><p>自动计算并收集结果，让重复汇总交给程序。</p></div><span class="project-category">AUTOMATION</span><span class="project-arrow">↗</span></button>
+ <button class="project-row reveal" data-page="projects"><span class="project-no">03</span><div><h3>游戏自动化助手</h3><p>明日方舟自动操作、接口数据采集与路径计算。</p></div><span class="project-category">SIDE PROJECT</span><span class="project-arrow">↗</span></button>
+ </section>
+ <section class="skills-section"><div class="skills-marquee" aria-hidden="true">GOLANG · PYTHON · AWS · KAFKA · GOLANG · PYTHON · AWS · KAFKA ·</div><div class="skills-content reveal"><h2>持续学习。<br>持续构建。</h2><div><p>Monash University<br>Information Technology 本科</p><p>Golang、Python、Shell / Bash<br>AWS、S3、Docker、Kubernetes、Kafka<br>MongoDB、MySQL、Redis</p><button data-page="skills">查看完整技术栈 ↗</button></div></div></section>
+ <section class="journey-contact"><h2 class="reveal">下一个想法，<br>聊聊？</h2><div class="contact-links"><a href="https://github.com/prefect12" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://www.linkedin.com/in/kadewu/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div><div class="journey-footer"><span>kade.</span><button data-home>回到世界选择 ↑</button></div></section>
+</article>
+</main>
+<dialog id="world-menu" class="world-menu" aria-labelledby="menu-title"><button class="close" data-close-menu aria-label="关闭菜单">×</button><h2 id="menu-title">选择你的世界。</h2><div class="menu-worlds"><button data-menu-world="ocean"><img src="./assets/ocean.webp" alt="海岛海报"><span>01 / Ocean<strong>群岛漫游</strong></span></button><button data-menu-world="orbit"><img src="./assets/orbit.webp" alt="太空海报"><span>02 / Orbit<strong>星际航行</strong></span></button><button data-menu-world="journey"><img src="./assets/journey.webp" alt="Journey 海报"><span>03 / Journey<strong>沿途的故事</strong></span></button></div><p>选择后返回海报，点击进入开启探索。</p></dialog>
+<dialog id="detail" aria-labelledby="detail-title"><button class="close" id="close" aria-label="关闭介绍">×</button><span class="detail-index" id="detail-index"></span><h2 id="detail-title"></h2><div id="detail-body"></div><button class="return" id="return">继续探索 <span>↗</span></button></dialog>
+<div id="transition" aria-hidden="true"><span>Let's explore.</span></div>
+<noscript><p>请启用 JavaScript 体验互动主页。也可访问 <a href="https://github.com/prefect12">Kade 的 GitHub</a>。</p></noscript>
+<script type="module" src="./main.js"></script>
+</body></html>
